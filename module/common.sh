@@ -51,6 +51,14 @@ put_row() { # $1 xml file, $2 version
   am broadcast -a oplus.intent.action.ROM_UPDATE_CONFIG_SUCCESS --esal ROM_UPDATE_CONFIG_LIST $F >/dev/null 2>&1
   log "applied version $2"
 }
+# announce the unlock to players (debug.* is readable by every SELinux domain): value = applied version
+PROP=debug.coloros.lyrics_unlock
+set_flag() {
+  local rp; for rp in /data/adb/ksu/bin/resetprop /data/adb/ap/bin/resetprop "$(command -v resetprop)"; do
+    [ -x "$rp" ] && { if [ -n "$1" ]; then "$rp" -n $PROP "$1"; else "$rp" --delete $PROP; fi; return; }
+  done
+  setprop $PROP "$1"
+}
 have_provider() { pm path com.oplus.romupdate >/dev/null 2>&1 || { log "com.oplus.romupdate missing/disabled - nothing to do"; return 1; }; }
 apply() { # $1 = force
   have_provider || return 1
@@ -59,11 +67,11 @@ apply() { # $1 = force
   key=$( (cat "$MODDIR/players.txt"; md5sum "$t.stock") | md5sum | cut -d' ' -f1)
   cur=$(content query --uri $U --projection version --where "filterName='$F'" 2>/dev/null | sed -n 's/.*version=\([0-9]*\).*/\1/p' | head -1)
   if [ "$1" != force ] && [ -f "$STATE" ] && [ "$(sed -n 1p "$STATE")" = "$key" ] && [ "$cur" = "$(sed -n 2p "$STATE")" ]; then
-    log "up to date (version $cur)"; return 0
+    log "up to date (version $cur)"; set_flag "$cur"; return 0
   fi
   v=$(new_version)
   patch_xml "$t.stock" "$t.xml" "$v"
-  put_row "$t.xml" "$v" && printf '%s\n%s\n' "$key" "$v" > "$STATE"
+  put_row "$t.xml" "$v" && printf '%s\n%s\n' "$key" "$v" > "$STATE" && set_flag "$v"
   rm -f "$t.stock" "$t.xml" "$MODDIR/.pk"
 }
 restore_stock() {
@@ -72,6 +80,6 @@ restore_stock() {
   stock_xml "$t.stock" || return 1
   v=$(new_version)
   sed -E "s:<version>[0-9]+</version>:<version>$v</version>:; s/:/\&#58;/g" "$t.stock" > "$t.xml"
-  put_row "$t.xml" "$v" && log "stock list restored"
+  put_row "$t.xml" "$v" && log "stock list restored"; set_flag ""
   rm -f "$t.stock" "$t.xml" "$STATE"
 }
