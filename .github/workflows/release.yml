@@ -1,0 +1,21 @@
+name: release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: check version
+        run: |
+          v=$(sed -n 's/^version=//p' module/module.prop)
+          [ "$v" = "${GITHUB_REF_NAME}" ] || { echo "module.prop version $v != tag ${GITHUB_REF_NAME}"; exit 1; }
+      - name: zip
+        run: cd module && zip -qr9 "../ColorOS_Lyrics_Unlock_${GITHUB_REF_NAME}.zip" . -x '.*'
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: ColorOS_Lyrics_Unlock_${{ github.ref_name }}.zip
+          body_path: CHANGELOG.md

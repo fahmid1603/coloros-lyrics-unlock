@@ -1,0 +1,28 @@
+# ColorOS Lyrics Unlock - players allowed on the native lock-screen/AOD lyric page.
+# Edit freely (one package per line, # = comment), then reboot or press the module Action button.
+# A player shows lyrics only if it publishes the OPlus `lyricInfo` metadata
+# (verified: Exhale; Namida with "ColorOS & HyperLyric" on). Others are listed for future support.
+com.ozyern.exhale                 # Exhale - publishes lyricInfo (verified on 8T)
+echo.music.iad1tya                # Echo Music
+com.metrolist.music               # Metrolist
+com.zionhuang.music               # InnerTune
+com.dd3boh.outertune              # OuterTune
+it.vfsfitvnm.vimusic              # ViMusic
+it.fast4x.rimusic                 # RiMusic
+com.anandnet.harmonymusic         # Harmony Music
+com.maxrave.simpmusic             # SimpMusic
+com.gokadzev.musify               # Musify
+oss.krtirtho.spotube              # Spotube
+org.akanework.gramophone          # Gramophone - sends lyricInfo only when its package is renamed to com.tencent.qqmusic
+org.oxycblt.auxio                 # Auxio
+code.name.monkey.retromusic       # Retro Music
+com.poupa.vinylmusicplayer        # Vinyl
+player.phonograph.plus            # Phonograph Plus
+com.kabouzeid.gramophone          # Phonograph
+org.fossify.musicplayer           # Fossify Music Player
+com.simplemobiletools.musicplayer # Simple Music Player
+org.gateshipone.odyssey           # Odyssey
+io.github.zyrouge.symphony        # Symphony
+com.msob7y.namida                 # Namida - publishes lyricInfo (Settings > lyrics integrations > 'ColorOS & HyperLyric')
+org.moire.ultrasonic              # Ultrasonic (Subsonic) - package unverified
+com.unicornsonlsd.finamp          # Finamp (Jellyfin)
